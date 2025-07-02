@@ -19,6 +19,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <version>1.18.30</version>
         </dependency>
         <!--mybatis-plus-->
         <dependency>
@@ -48,5 +49,6 @@
             <scope>provided </scope>
         </dependency>
     </dependencies>
+
 </project>
 
