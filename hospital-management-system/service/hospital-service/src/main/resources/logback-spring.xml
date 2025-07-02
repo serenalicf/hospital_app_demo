@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="10 seconds">
+    <!-- Log levels from lowest to highest are TRACE < DEBUG < INFO < WARN < ERROR < FATAL. If set to WARN, information lower than WARN will not be output -->
+    <!-- scan: When this attribute is set to true, the configuration file will be reloaded if changed. Default value is true -->
+    <!-- scanPeriod: Sets the time interval to check if the configuration file has been modified. If no time unit is given, the default unit is milliseconds. This attribute takes effect when scan is true. Default interval is 1 minute. -->
+    <!-- debug: When this attribute is set to true, logback's internal log information will be printed to view logback's running status in real-time. Default value is false. -->
+
+    <contextName>logback</contextName>
+    <!-- The name value is the variable name, and the value is the defined value of the variable. The defined values will be inserted into the logger context. After defining variables, you can use "${}" to use the variables. -->
+    <property name="log.path" value="C:/Users/serenali/hms_log" />
+
+    <!-- Colored logs -->
+    <!-- Configure format variables: CONSOLE_LOG_PATTERN colored log format -->
+    <!-- magenta: magenta -->
+    <!-- boldMagenta: bold red -->
+    <!-- cyan: cyan -->
+    <!-- white: white -->
+    <!-- magenta: magenta -->
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%yellow(%date{yyyy-MM-dd HH:mm:ss}) |%highlight(%-5level) |%blue(%thread) |%blue(%file:%line) |%green(%logger) |%cyan(%msg%n)"/>
+
+
+    <!-- Output to console -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- This log appender is for development use, only configuring the lowest level. The log level output to the console is greater than or equal to this level -->
+        <!-- For example: If INFO level is configured here, even if DEBUG level logs are configured elsewhere, they will not be output -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <encoder>
+            <Pattern>${CONSOLE_LOG_PATTERN}</Pattern>
+            <!-- Set character set -->
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+
+    <!-- Output to file -->
+
+    <!-- Time-based rolling output for INFO level logs -->
+    <appender name="INFO_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- Path and filename of the log file being recorded -->
+        <file>${log.path}/log_info.log</file>
+        <!-- Log file output format -->
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <!-- Log recorder's rolling strategy, recording by date and size -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- Daily log archive path and format -->
+            <fileNamePattern>${log.path}/info/log-info-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <!-- Log file retention days -->
+            <maxHistory>15</maxHistory>
+        </rollingPolicy>
+        <!-- This log file only records info level -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- Time-based rolling output for WARN level logs -->
+    <appender name="WARN_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- Path and filename of the log file being recorded -->
+        <file>${log.path}/log_warn.log</file>
+        <!-- Log file output format -->
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+            <charset>UTF-8</charset> <!-- Set character set here -->
+        </encoder>
+        <!-- Log recorder's rolling strategy, recording by date and size -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.path}/warn/log-warn-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <!-- Log file retention days -->
+            <maxHistory>15</maxHistory>
+        </rollingPolicy>
+        <!-- This log file only records warn level -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>warn</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+
+    <!-- Time-based rolling output for ERROR level logs -->
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- Path and filename of the log file being recorded -->
+        <file>${log.path}/log_error.log</file>
+        <!-- Log file output format -->
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+            <charset>UTF-8</charset> <!-- Set character set here -->
+        </encoder>
+        <!-- Log recorder's rolling strategy, recording by date and size -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.path}/error/log-error-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <!-- Log file retention days -->
+            <maxHistory>15</maxHistory>
+        </rollingPolicy>
+        <!-- This log file only records ERROR level -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!--
+        <logger> is used to set the log printing level for a specific package or class, as well as specify the <appender>.
+        <logger> has only one name attribute,
+        an optional level and an optional additivity attribute.
+        name: used to specify a certain package or specific class constrained by this logger.
+        level: used to set the print level, case insensitive: TRACE, DEBUG, INFO, WARN, ERROR, ALL and OFF,
+              if this attribute is not set, then the current logger will inherit the level of its parent.
+    -->
+    <!--
+        When using mybatis, SQL statements are only printed under debug level. Here we've only configured info level, so to view SQL statements, there are two options:
+        First, change <root level="INFO"> to <root level="DEBUG"> which will print SQL, but this will also show many other messages in the logs
+        Second, configure DEBUG mode specifically for the mapper directory, as shown below. This way SQL statements will be printed, while other logs remain at the normal DEBUG level:
+     -->
+    <!-- Development environment: print to console -->
+    <springProfile name="dev">
+        <!-- Can output debug logs from the project, including mybatis SQL logs -->
+        <logger name="com.guli" level="INFO" />
+
+        <!--
+            The root node is a required node, used to specify the most basic log output level, with only one level attribute
+            level: used to set the print level, case insensitive: TRACE, DEBUG, INFO, WARN, ERROR, ALL and OFF, default is DEBUG
+            Can contain zero or more appender elements.
+        -->
+        <root level="INFO">
+            <appender-ref ref="CONSOLE" />
+            <appender-ref ref="INFO_FILE" />
+            <appender-ref ref="WARN_FILE" />
+            <appender-ref ref="ERROR_FILE" />
+        </root>
+    </springProfile>
+
+
+    <!-- Production environment: output to file -->
+    <springProfile name="pro">
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE" />
+            <appender-ref ref="DEBUG_FILE" />
+            <appender-ref ref="INFO_FILE" />
+            <appender-ref ref="ERROR_FILE" />
+            <appender-ref ref="WARN_FILE" />
+        </root>
+    </springProfile>
+
+</configuration>
