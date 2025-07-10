@@ -18,14 +18,14 @@ public class Hospital extends BaseMongoEntity {
 
 	@ApiModelProperty(value = "Hospital Code")
 	@Indexed(unique = true) // Unique index
-	private String hoscode;
+	private String hospitalCode;
 
 	@ApiModelProperty(value = "Hospital Name")
 	@Indexed // Regular index
-	private String hosname;
+	private String hospitalName;
 
 	@ApiModelProperty(value = "Hospital Type")
-	private String hostype;
+	private String hospitalType;
 
 	@ApiModelProperty(value = "Province Code")
 	private String provinceCode;
@@ -43,7 +43,7 @@ public class Hospital extends BaseMongoEntity {
 	private String logoData;
 
 	@ApiModelProperty(value = "Hospital Introduction")
-	private String intro;
+	private String introduction;
 
 	@ApiModelProperty(value = "Transportation Route")
 	private String route;
