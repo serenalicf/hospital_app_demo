@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.serena.hospitalservice.repository.DepartmentRepository;
 import com.serena.model.model.hospital.Department;
 import com.serena.model.vo.hospital.DepartmentQueryVo;
+import com.serena.model.vo.hospital.DepartmentVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -13,8 +14,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
@@ -69,5 +73,41 @@ public class DepartmentServiceImpl implements DepartmentService {
             //department.setIsDeleted(1);
             departmentRepository.deleteById(department.getId());
         }
+    }
+
+    @Override
+    public List<DepartmentVo> findDepartmentTree(String hospitalCode) {
+        List<DepartmentVo> departmentVoList = new ArrayList<>();
+        Department departmentQuery = new Department();
+        departmentQuery.setHospitalCode(hospitalCode);
+        Example<Department> example = Example.of(departmentQuery);
+        List<Department> departmentList = departmentRepository.findAll(example);
+
+        //categorize by majorDepartmentCode, then get its child departments
+        Map<String, List<Department>> departmentMap = departmentList.stream().collect(Collectors.groupingBy(Department::getMajorDepartmentCode));
+        //traverse departmentMap
+        for(Map.Entry<String, List<Department>> entry : departmentMap.entrySet()) {
+            String majorDepartmentCode = entry.getKey();
+            List<Department> departmentList1 = entry.getValue();
+
+            //handle major department
+            DepartmentVo departmentVo = new DepartmentVo();
+            departmentVo.setDepartmentCode(majorDepartmentCode);
+            departmentVo.setDepartmentName(departmentList1.get(0).getDepartmentName());
+
+            //handle child department
+            List<DepartmentVo> children = new ArrayList<>();
+            for(Department department : departmentList1) {
+                DepartmentVo departmentVo1 = new DepartmentVo();
+                departmentVo1.setDepartmentCode(department.getDepartmentCode());
+                departmentVo1.setDepartmentName(department.getDepartmentName());
+                children.add(departmentVo1);
+            }
+            //add children to major department
+            departmentVo.setChildren(children);
+            departmentVoList.add(departmentVo);
+        }
+
+        return departmentVoList;
     }
 }

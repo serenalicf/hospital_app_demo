@@ -14,5 +14,11 @@
     <name>hospital-service</name>
     <description>hospital-service</description>
 
-
+    <dependencies>
+        <dependency>
+            <groupId>com.serena</groupId>
+            <artifactId>data-client-service</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 </project>

@@ -15,4 +15,7 @@ public interface DictionaryService extends IService<Dictionary> {
 
     void importData(MultipartFile file);
 
+    String getName(String dictionaryCode, String value);
+
+    List<Dictionary> findByDictionaryCode(String dictionaryCode);
 }

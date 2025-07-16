@@ -45,4 +45,23 @@ public class DictionaryController {
         return Result.ok();
     }
 
+    @GetMapping("getName/{dictionaryCode}/{value}")
+    public String getName(@PathVariable String dictionaryCode, @PathVariable String value) {
+        String dictionaryName = dictionaryService.getName(dictionaryCode, value);
+        return dictionaryName;
+    }
+
+    @GetMapping("getName/{value}")
+    public String getName(@PathVariable String value) {
+        String dictionaryName = dictionaryService.getName("", value);
+        return dictionaryName;
+    }
+
+    @ApiOperation(value = "Find next node by dictionaryCode")
+    @GetMapping("findByDictionaryCode/{dictionaryCode}")
+    public Result findByDictionaryCode(@PathVariable String dictionaryCode) {
+        List<Dictionary> dictionaryList = dictionaryService.findByDictionaryCode(dictionaryCode);
+        return Result.ok(dictionaryList);
+    }
+
 }

@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.serena.commonutil.result.Result;
 import com.serena.hospitalservice.service.HospitalSettingService;
-import com.serena.model.dto.hospital.HospitalSettingQueryDto;
+import com.serena.model.vo.hospital.HospitalSettingQueryVo;
 import com.serena.model.model.hospital.HospitalSetting;
 import com.serena.serviceutil.utils.MD5;
 import io.swagger.annotations.Api;
@@ -56,12 +56,12 @@ public class HospitalSetController {
     @PostMapping("searchPage/{currentPage}/{limit}")
     public Result searchPageHospitalSetting(@PathVariable int currentPage,
                                             @PathVariable int limit,
-                                            @RequestBody(required = false) HospitalSettingQueryDto hospitalSettingQueryDto) {
+                                            @RequestBody(required = false) HospitalSettingQueryVo hospitalSettingQueryVo) {
         Page<HospitalSetting> page = new Page<>(currentPage, limit);
 
         QueryWrapper queryWrapper = new QueryWrapper<>();
-        String hospitalName = hospitalSettingQueryDto.getHospitalName();
-        String hospitalCode = hospitalSettingQueryDto.getHospitalCode();
+        String hospitalName = hospitalSettingQueryVo.getHospitalName();
+        String hospitalCode = hospitalSettingQueryVo.getHospitalCode();
         if(!StringUtils.isEmpty(hospitalName)){
             queryWrapper.like("hospital_name", hospitalName);
 

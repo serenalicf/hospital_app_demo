@@ -5,12 +5,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.serena.dataservice.listener.DictionaryListener;
 import com.serena.dataservice.mapper.DictionaryMapper;
-import com.serena.model.dto.data.DictionaryDto;
+import com.serena.model.vo.data.DictionaryDto;
 import com.serena.model.model.data.Dictionary;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -75,6 +76,43 @@ public class DictionaryServiceImpl extends ServiceImpl<DictionaryMapper, Diction
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public String getName(String dictionaryCode, String value) {
+        if(StringUtils.isEmpty(dictionaryCode)) {
+            Dictionary dictionary = baseMapper.selectOne(new QueryWrapper<Dictionary>().eq("value", value));
+            return dictionary.getName();
+        } else {
+
+            //get dictionary id by dictionaryCode
+            Dictionary dictionary = this.getDictionaryByDictionaryCode(dictionaryCode);
+            Long parentId = dictionary.getId();
+
+            //search by parentId and value
+            Dictionary finalDictionary = baseMapper.selectOne(new QueryWrapper<Dictionary>()
+                    .eq("parent_id", parentId)
+                    .eq("value", value));
+            return finalDictionary.getName();
+        }
+    }
+
+    @Override
+    public List<Dictionary> findByDictionaryCode(String dictionaryCode) {
+        // find id by dictionaryCode
+        Dictionary dictionary = this.getDictionaryByDictionaryCode(dictionaryCode);
+
+        // find next node by id
+        List<Dictionary> dictionaryList = this.findChildren(dictionary.getId());
+        return dictionaryList;
+    }
+
+    private Dictionary getDictionaryByDictionaryCode(String dictionaryCode) {
+        QueryWrapper<Dictionary> queryWrapper = new QueryWrapper<>();
+        //get dictionary id by dictionaryCode
+        queryWrapper.eq("dictionary_code", dictionaryCode);
+        Dictionary dictionary = baseMapper.selectOne(queryWrapper);
+        return dictionary;
     }
 
 
